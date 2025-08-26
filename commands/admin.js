@@ -1,4 +1,4 @@
-/* DayZero KillFeed (DZK) DIY Project 2.1.1
+/* DayZero KillFeed (DZK) DIY Project 2.1.2
 Copyright (c) 2023 TheCodeGang LLC.
 
 This program is free software: you can redistribute it and/or modify
@@ -357,9 +357,10 @@ async function getDetails(interaction) {
 
             try {
                 logResponse = axios.get('https://api.nitrado.net/services/'+`${ID1}`+'/gameservers/file_server/list?dir=/games/'+`${ID2}`+`${admPlat}`,{ responseType: 'application/json',  headers: {'Authorization' : 'Bearer '+`${NITRATOKEN}`, 'Accept': 'application/json'}})
-                .then((res) => {
+                .then(async (res) => {
                     if (res.status >= 200 && res.status < 300) {
-                        downloadLogFile(res.data);
+                        //console.log(res.data);
+                        await downloadLogFile(res);
                     } else {
                         console.log(res);
                     }
@@ -641,10 +642,10 @@ function getTimezone() {
 }
 
 async function downloadLogFile(res) {
-    let url1, url2, url3;
+    let url1, url2, url3, parsed = JSON.parse(res.data);
     if (PLATFORM.match(/XBOX|xbox|Xbox/i)) {
         admRegex = /^DayZServer_X1_x64_(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})\.ADM$/;
-        const latestADM = await getLatestADMEntry(res);
+        const latestADM = await getLatestADMEntry(parsed);
         if (latestADM) {
            url1 = 'https://api.nitrado.net/services/'
            url2 = '/gameservers/file_server/download?file=/games/'
@@ -653,8 +654,8 @@ async function downloadLogFile(res) {
         return console.log("Unable to determine logfile name!");
         }
     } else if (PLATFORM.match(/PLAYSTATION|PS4|PS5|playstation|Playstation/i)) {
-        admRegex = /^DayZServer_X1_x64_(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})\.ADM$/;
-        const latestADM = await getLatestADMEntry(res);
+        admRegex = /^DayZServer_PS4_x64_(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})\.ADM$/;
+        const latestADM = await getLatestADMEntry(parsed);
         if (latestADM) {
            url1 = 'https://api.nitrado.net/services/'
            url2 = '/gameservers/file_server/download?file=/games/'
@@ -663,8 +664,8 @@ async function downloadLogFile(res) {
         return console.log("Unable to determine logfile name!");
         }
     } else {
-        admRegex = /^DayZServer_X1_x64_(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})\.ADM$/;
-        const latestADM = await getLatestADMEntry(res);
+        admRegex = /^DayZServer_x64_(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})\.ADM$/;
+        const latestADM = await getLatestADMEntry(parsed);
         if (latestADM) {
            url1 = 'https://api.nitrado.net/services/'
            url2 = '/gameservers/file_server/download?file=/games/'
@@ -684,6 +685,7 @@ async function downloadLogFile(res) {
 }
 
 async function getLatestADMEntry(jsonObj) {
+    //console.log(jsonObj);
     if (
         !jsonObj ||
         typeof jsonObj !== "object" ||
