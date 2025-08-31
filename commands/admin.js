@@ -642,41 +642,60 @@ function getTimezone() {
 }
 
 async function downloadLogFile(res) {
-    let url1, url2, url3, parsed = JSON.parse(res.data);
+    let url1, url2, url3;
+    let parsed;
+    if (typeof res.data === "string") {
+        try {
+            parsed = JSON.parse(res.data);
+        } catch (err) {
+            console.error("Failed to parse response data:", err);
+            return;
+        }
+    } else if (typeof res.data === "object") {
+        parsed = res.data;
+    } else {
+        console.error("Unexpected res.data type:", typeof res.data);
+        return;
+    }
+
     if (PLATFORM.match(/XBOX|xbox|Xbox/i)) {
         admRegex = /^DayZServer_X1_x64_(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})\.ADM$/;
         const latestADM = await getLatestADMEntry(parsed);
         if (latestADM) {
-           url1 = 'https://api.nitrado.net/services/'
-           url2 = '/gameservers/file_server/download?file=/games/'
-           url3 = `/noftp/dayzxb/config/${latestADM.name}`
+            url1 = 'https://api.nitrado.net/services/';
+            url2 = '/gameservers/file_server/download?file=/games/';
+            url3 = `/noftp/dayzxb/config/${latestADM.name}`;
         } else {
-        return console.log("Unable to determine logfile name!");
+            return console.log("Unable to determine logfile name!");
         }
     } else if (PLATFORM.match(/PLAYSTATION|PS4|PS5|playstation|Playstation/i)) {
         admRegex = /^DayZServer_PS4_x64_(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})\.ADM$/;
         const latestADM = await getLatestADMEntry(parsed);
         if (latestADM) {
-           url1 = 'https://api.nitrado.net/services/'
-           url2 = '/gameservers/file_server/download?file=/games/'
-           url3 = `/noftp/dayzps/config/${latestADM.name}`
+            url1 = 'https://api.nitrado.net/services/';
+            url2 = '/gameservers/file_server/download?file=/games/';
+            url3 = `/noftp/dayzps/config/${latestADM.name}`;
         } else {
-        return console.log("Unable to determine logfile name!");
+            return console.log("Unable to determine logfile name!");
         }
     } else {
         admRegex = /^DayZServer_x64_(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})\.ADM$/;
         const latestADM = await getLatestADMEntry(parsed);
         if (latestADM) {
-           url1 = 'https://api.nitrado.net/services/'
-           url2 = '/gameservers/file_server/download?file=/games/'
-           url3 = `/ftproot/dayzstandalone/config/${latestADM.name}`
+            url1 = 'https://api.nitrado.net/services/';
+            url2 = '/gameservers/file_server/download?file=/games/';
+            url3 = `/ftproot/dayzstandalone/config/${latestADM.name}`;
         } else {
-        return console.log("Unable to determine logfile name!");
+            return console.log("Unable to determine logfile name!");
         }
     }
+
     const filePath = path.resolve('./logs', 'serverlog.ADM');
     const writer = fs.createWriteStream(filePath);
-    const response = await axios.get(`${url1}${ID1}${url2}${ID2}${url3}`, { responseType: 'stream', headers: { 'Authorization': `Bearer ${NITRATOKEN}`, 'Accept': 'application/octet-stream' } });
+    const response = await axios.get(
+        `${url1}${ID1}${url2}${ID2}${url3}`,
+        { responseType: 'stream', headers: { 'Authorization': `Bearer ${NITRATOKEN}`, 'Accept': 'application/octet-stream' } }
+    );
     response.data.pipe(writer);
     return new Promise((resolve, reject) => {
         writer.on('finish', resolve);
@@ -685,7 +704,6 @@ async function downloadLogFile(res) {
 }
 
 async function getLatestADMEntry(jsonObj) {
-    //console.log(jsonObj);
     if (
         !jsonObj ||
         typeof jsonObj !== "object" ||
@@ -696,29 +714,22 @@ async function getLatestADMEntry(jsonObj) {
     }
 
     let latestEntry = null;
-    let latestKey = null; 
+    let latestKey = null;
 
     for (const entry of jsonObj.data.entries) {
-        // I only care about files whose name matches the ADM‐pattern
-        if (entry.type !== "file" || typeof entry.name !== "string") {
-        continue;
-        }
+        if (entry.type !== "file" || typeof entry.name !== "string") continue;
 
         const match = entry.name.match(admRegex);
-        if (!match) {
-        continue;
-        }
+        if (!match) continue;
 
         const rawStamp = match[1];
-
         const normalized = rawStamp.replace(/[-_]/g, "");
 
         if (latestKey === null || normalized > latestKey) {
-        latestKey = normalized;
-        latestEntry = entry;
+            latestKey = normalized;
+            latestEntry = entry;
         }
     }
-    
     return latestEntry;
 }
 
