@@ -1,14 +1,15 @@
 {
     "CLIENTID": "",
     "GUILDID": "",
-    "PLATFORM": "XBOX",
+    "PLATFORM": "",
     "TOKEN": "",
     "ID1": "",
-    "ID2" :"",
+    "ID2": "",
     "NITRATOKEN": "",
-    "REGION": "XBOX",
+    "REGION": "",
     "FTPPORT": "", 
     "FTPUSER": "", 
     "FTPPW": "", 
     "FTPDETAIL": ""
 }
+
