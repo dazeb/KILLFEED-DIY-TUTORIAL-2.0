@@ -1,4 +1,4 @@
-/* DayZero KillFeed (DZK) DIY Project 2.1
+/* DayZero KillFeed (DZK) DIY Project 2.0
 Copyright (c) 2023 TheCodeGang LLC.
 
 This program is free software: you can redistribute it and/or modify
