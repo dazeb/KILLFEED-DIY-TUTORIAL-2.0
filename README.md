@@ -20,7 +20,7 @@ Delete node_modules.zip file.
 
 Requiurements:
 Windows PC/Laptop,
-Nitrado Console DayZ Gamer Server,
+Nitrado Console DayZ Game Server,
 Discord,
 NVM-for-Windows,
 Visual Studio Code.
