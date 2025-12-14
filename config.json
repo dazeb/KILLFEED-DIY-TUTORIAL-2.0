@@ -1,15 +1,14 @@
 {
-    "CLIENTID": "",
-    "GUILDID": "",
-    "PLATFORM": "",
-    "TOKEN": "",
-    "ID1": "",
-    "ID2": "",
-    "NITRATOKEN": "",
-    "REGION": "",
+    "CLIENTID": "Required",
+    "GUILDID": "Required",
+    "PLATFORM": "Required",
+    "TOKEN": "Required",
+    "ID1": "Required",
+    "ID2" :"Required",
+    "NITRATOKEN": "Required",
+    "REGION": "Required",
     "FTPPORT": "", 
     "FTPUSER": "", 
     "FTPPW": "", 
     "FTPDETAIL": ""
 }
-
