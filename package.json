@@ -10,7 +10,7 @@
   "author": "SYNT4X",
   "license": "ISC",
   "dependencies": {
-    "@discordjs/rest": "^0.5.0",
+    "@discordjs/rest": "^2.6.3",
     "axios": "^1.18.0",
     "colors": "^1.4.0",
     "concat-stream": "^2.0.0",
